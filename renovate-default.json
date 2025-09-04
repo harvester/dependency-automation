@@ -7,7 +7,7 @@
         "master",
         "main",
         "v1.5",
-        "v1.4"
+        "v1.6"
     ],
     "automergeMajor": false,
     "dockerfile": {
