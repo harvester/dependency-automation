@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "prHourlyLimit": 12,
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
   "baseBranchPatterns": ["master", "main"],
   "recreateWhen": "always",
   "enabledManagers": [
@@ -30,16 +31,16 @@
   },
   "packageRules": [
     {
-      "description": "Auto-merge patch updates after 14 days stabilization",
+      "description": "Auto-merge patch updates after 7 days stabilization",
       "matchUpdateTypes": ["patch"],
       "automerge": true,
-      "minimumReleaseAge": "14 days"
+      "minimumReleaseAge": "7 days"
     },
     {
-      "description": "Auto-merge security updates after 14 days",
+      "description": "Auto-merge security updates after 7 days",
       "matchCategories": ["security"],
       "automerge": true,
-      "minimumReleaseAge": "14 days"
+      "minimumReleaseAge": "7 days"
     },
     {
       "description": "Minor updates require human review",
