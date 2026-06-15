@@ -2,12 +2,11 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
-  "dependencyDashboardApproval": false,
-  "dependencyDashboard": false,
   "baseBranchPatterns": [
     "master",
     "main"
   ],
+  "dependencyDashboard": false,
   "recreateWhen": "always",
   "enabledManagers": [
     "gomod",
@@ -17,8 +16,7 @@
   ],
   "extends": [
     "config:recommended",
-    ":gitSignOff",
-    ":disableDependencyDashboard"
+    ":gitSignOff"
   ],
   "ignorePaths": [
     "deploy/**",
