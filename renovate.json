@@ -4,7 +4,11 @@
   "prConcurrentLimit": 0,
   "baseBranchPatterns": [
     "master",
-    "main"
+    "main",
+    "v1.7",
+    "v1.8",
+    "release-1.14",
+    "release-1.15"
   ],
   "dependencyDashboard": false,
   "recreateWhen": "always",
@@ -86,7 +90,8 @@
     {
       "description": "Release branches: only patch and security",
       "matchBaseBranches": [
-        "/^v\\d+(\\.\\d+)+/"
+        "/^v\\d+(\\.\\d+)+/",
+        "/^release-\\d+(\\.\\d+)+/"
       ],
       "matchUpdateTypes": [
         "major",
