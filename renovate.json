@@ -4,7 +4,9 @@
   "prConcurrentLimit": 0,
   "baseBranchPatterns": [
     "master",
-    "main"
+    "main",
+    "v1.7",
+    "v1.8"
   ],
   "dependencyDashboard": false,
   "recreateWhen": "always",
