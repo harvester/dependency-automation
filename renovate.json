@@ -6,9 +6,7 @@
     "master",
     "main",
     "v1.7",
-    "v1.8",
-    "release-1.14",
-    "release-1.15"
+    "v1.8"
   ],
   "dependencyDashboard": false,
   "recreateWhen": "always",
@@ -90,8 +88,7 @@
     {
       "description": "Release branches: only patch and security",
       "matchBaseBranches": [
-        "/^v\\d+(\\.\\d+)+/",
-        "/^release-\\d+(\\.\\d+)+/"
+        "/^v\\d+(\\.\\d+)+/"
       ],
       "matchUpdateTypes": [
         "major",
