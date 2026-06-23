@@ -197,6 +197,20 @@
       "rangeStrategy": "bump"
     },
     {
+      "description": "Disable patch updates for Go toolchain Docker images",
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "matchPackageNames": [
+        "golang",
+        "registry.suse.com/bci/golang"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "enabled": false
+    },
+    {
       "description": "Group all BCI base images together",
       "enabled": true,
       "matchManagers": [
