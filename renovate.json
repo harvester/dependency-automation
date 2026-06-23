@@ -29,8 +29,8 @@
   ],
   "dockerfile": {
     "managerFilePatterns": [
-    "(^|/)Dockerfile$",
-    "(^|/)Dockerfile\\.[^/]*$"
+      "(^|/)Dockerfile$",
+      "(^|/)Dockerfile\\.[^/]*$"
     ]
   },
   "lockFileMaintenance": {
@@ -187,8 +187,7 @@
       ],
       "matchUpdateTypes": [
         "major",
-        "minor",
-        "patch"
+        "minor"
       ],
       "groupName": "golang toolchain",
       "semanticCommitType": "deps",
