@@ -19,10 +19,16 @@
   ],
   "extends": [
     "config:recommended",
+    "security:only-security-updates",
     ":semanticCommitTypeAll(chore)",
     "mergeConfidence:age-confidence-badges",
     ":gitSignOff"
   ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["needs-review", "security"],
+    "automerge": false
+  },
   "ignorePaths": [
     "deploy/**",
     "**/charts/**",
@@ -39,192 +45,81 @@
   },
   "packageRules": [
     {
-      "description": "Disable all non-security updates",
-      "enabled": false,
-      "matchPackageNames": [
-        "*"
-      ],
-      "excludeCategories": [
-        "security"
-      ]
-    },
-    {
-      "description": "Enable and configure security updates",
-      "matchCategories": [
-        "security"
-      ],
-      "enabled": true,
-      "automerge": false,
-      "minimumReleaseAge": "7 days"
-    },
-    {
-      "description": "Minor updates require human review",
-      "matchUpdateTypes": [
-        "minor"
-      ],
-      "automerge": false,
-      "labels": [
-        "needs-review"
-      ]
-    },
-    {
       "description": "Use dependencies label for real dependency updates",
-      "matchManagers": [
-        "gomod",
-        "dockerfile",
-        "pip_requirements"
-      ],
-      "addLabels": [
-        "dependencies"
-      ]
+      "matchManagers": ["gomod", "dockerfile", "pip_requirements"],
+      "addLabels": ["dependencies"]
     },
     {
       "description": "Use ci scope for GitHub Actions updates",
-      "matchManagers": [
-        "github-actions"
-      ],
-      "addLabels": [
-        "ci"
-      ],
+      "matchManagers": ["github-actions"],
+      "addLabels": ["ci"],
       "semanticCommitType": "chore",
       "semanticCommitScope": "ci"
     },
     {
-      "description": "Release branches: only patch and security",
-      "matchBaseBranches": [
-        "/^v\\d+(\\.\\d+)+/"
-      ],
-      "matchUpdateTypes": [
-        "major",
-        "minor"
-      ],
+      "description": "Release branches: only security",
+      "matchBaseBranches": ["/^v\\d+(\\.\\d+)+/"],
+      "matchUpdateTypes": ["major", "minor"],
       "enabled": false
     },
     {
       "description": "Disable Helm datasource updates",
       "enabled": false,
-      "matchDatasources": [
-        "helm"
-      ]
+      "matchDatasources": ["helm"]
     },
     {
       "description": "Disable major updates for Go modules",
-      "matchManagers": [
-        "gomod"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
       "description": "Disable github.com/rancher/lasso updates",
       "enabled": false,
-      "matchManagers": [
-        "gomod"
-      ],
-      "matchPackageNames": [
-        "github.com/rancher/lasso"
-      ]
+      "matchManagers": ["gomod"],
+      "matchPackageNames": ["github.com/rancher/lasso"]
     },
     {
-      "description": "Disable update longhorn packages",
+      "description": "Disable longhorn packages",
       "enabled": false,
-      "matchManagers": [
-        "gomod"
-      ],
-      "matchPackagePatterns": [
-        "^github\\.com/longhorn/"
-      ],
-      "groupName": "longhorn dependencies",
-      "automerge": false,
-      "prBodyNotes": [
-        "⚠️ **Check k8s compatibility before merging.**"
-      ]
+      "matchManagers": ["gomod"],
+      "matchPackagePatterns": ["^github\\.com/longhorn/"]
     },
     {
       "description": "Disable kubevirt updates",
       "enabled": false,
-      "matchManagers": [
-        "gomod"
-      ],
-      "matchPackagePatterns": [
-        "^kubevirt\\.io/"
-      ]
+      "matchManagers": ["gomod"],
+      "matchPackagePatterns": ["^kubevirt\\.io/"]
     },
     {
       "description": "Group golang toolchain - go.mod",
-      "enabled": true,
-      "matchManagers": [
-        "gomod"
-      ],
-      "matchDepNames": [
-        "go"
-      ],
-      "matchPackageNames": [
-        "go"
-      ],
-      "matchDepTypes": [
-        "golang"
-      ],
+      "matchManagers": ["gomod"],
+      "matchDepNames": ["go"],
+      "matchPackageNames": ["go"],
+      "matchDepTypes": ["golang"],
       "groupName": "golang toolchain",
       "semanticCommitType": "deps",
       "semanticCommitScope": "go",
       "automerge": false,
-      "minimumReleaseAge": "0 days",
       "rangeStrategy": "bump"
     },
     {
       "description": "Group golang toolchain - Dockerfile",
-      "enabled": true,
-      "matchManagers": [
-        "dockerfile"
-      ],
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "golang",
-        "registry.suse.com/bci/golang"
-      ],
-      "matchDepTypes": [
-        "stage",
-        "final"
-      ],
-      "matchUpdateTypes": [
-        "major",
-        "minor"
-      ],
+      "matchManagers": ["dockerfile"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["golang", "registry.suse.com/bci/golang"],
+      "matchDepTypes": ["stage", "final"],
       "groupName": "golang toolchain",
       "semanticCommitType": "deps",
       "semanticCommitScope": "go",
       "automerge": false,
-      "minimumReleaseAge": "0 days",
       "rangeStrategy": "bump"
-    },
-    {
-      "description": "Disable patch updates for Go toolchain Docker images",
-      "matchManagers": [
-        "dockerfile"
-      ],
-      "matchPackageNames": [
-        "golang",
-        "registry.suse.com/bci/golang"
-      ],
-      "matchUpdateTypes": [
-        "patch"
-      ],
-      "enabled": false
     },
     {
       "description": "Group all BCI base images together",
       "enabled": true,
-      "matchManagers": [
-        "dockerfile"
-      ],
-      "matchDatasources": [
-        "docker"
-      ],
+      "matchManagers": ["dockerfile"],
+      "matchDatasources": ["docker"],
       "matchPackageNames": [
         "registry.suse.com/bci/**",
         "registry.opensuse.org/**",
@@ -238,10 +133,7 @@
     },
     {
       "description": "Group k8s and rancher packages",
-      "enabled": true,
-      "matchManagers": [
-        "gomod"
-      ],
+      "matchManagers": ["gomod"],
       "matchPackagePatterns": [
         "k8s\\.io/",
         "^github\\.com/rancher/",
@@ -249,24 +141,15 @@
       ],
       "automerge": false,
       "groupName": "k8s + rancher dependencies",
-      "prBodyNotes": [
-        "⚠️ **Check longhorn compatibility before merging.**"
-      ]
+      "prBodyNotes": ["⚠️ **Check longhorn compatibility before merging.**"]
     },
     {
       "description": "Label PRs with target branch name",
-      "addLabels": [
-        "renovate/{{baseBranch}}"
-      ]
+      "addLabels": ["renovate/{{baseBranch}}"]
     }
   ],
-  "postUpdateOptions": [
-    "gomodTidy",
-    "gomodVendor"
-  ],
-  "schedule": [
-    "at any time"
-  ],
+  "postUpdateOptions": ["gomodTidy", "gomodVendor"],
+  "schedule": ["at any time"],
   "semanticCommitScope": "deps",
   "semanticCommitType": "chore",
   "semanticCommits": "enabled",
