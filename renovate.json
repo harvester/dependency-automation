@@ -89,8 +89,13 @@
     {
       "description": "Disable kubevirt updates",
       "enabled": false,
-      "matchManagers": ["gomod"],
-      "matchPackagePatterns": ["^kubevirt\\.io/"]
+    },
+    {
+      "description": "Only allow patch updates for github.com/harvester/harvester",
+      "matchPackageNames": [
+        "github.com/harvester/harvester"
+      ],
+      "allowedVersions": "~{{major}}.{{minor}}.0"
     },
     {
       "description": "Group golang toolchain - go.mod",
