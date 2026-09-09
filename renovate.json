@@ -1,7 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "prHourlyLimit": 0,
-  "prConcurrentLimit": 0,
+  "extends": [
+    "config:recommended",
+    "security:only-security-updates",
+    ":semanticCommitTypeAll(chore)",
+    "mergeConfidence:age-confidence-badges",
+    "security:gomodIndirectSecurityUpdates",
+    ":gitSignOff"
+  ],
   "baseBranchPatterns": [
     "master",
     "main",
@@ -9,21 +15,30 @@
     "v1.8",
     "v1.9"
   ],
-  "dependencyDashboard": false,
-  "osvVulnerabilityAlerts": true,
   "enabledManagers": [
     "gomod",
     "dockerfile",
     "github-actions",
     "pip_requirements"
   ],
-  "extends": [
-    "config:recommended",
-    "security:only-security-updates",
-    ":semanticCommitTypeAll(chore)",
-    "mergeConfidence:age-confidence-badges",
-    ":gitSignOff"
+  "ignorePaths": [
+    "deploy/**",
+    "**/charts/**"
   ],
+  "schedule": ["at any time"],
+  "timezone": "Asia/Taipei",
+  "dependencyDashboard": false,
+  "osvVulnerabilityAlerts": true,
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+  "reviewers": ["harvester/dev"],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "postUpdateOptions": ["gomodTidy", "gomodVendor"],
   "vulnerabilityAlerts": {
     "enabled": true,
     "labels": ["needs-review"],
@@ -40,28 +55,13 @@
         },
         {
           "description": "Only allow patch updates for github.com/harvester/harvester on release branches",
-          "matchPackageNames": [
-            "github.com/harvester/harvester"
-          ],
+          "matchPackageNames": ["github.com/harvester/harvester"],
           "allowedVersions": "~{{major}}.{{minor}}.0"
         }
       ]
     }
   },
-  "reviewers": ["harvester/dev"],
-  "ignorePaths": [
-    "deploy/**",
-    "**/charts/**"
-  ],
-  "lockFileMaintenance": {
-    "enabled": true
-  },
   "packageRules": [
-    {
-      "description": "Use dependencies label for real dependency updates",
-      "matchManagers": ["gomod", "dockerfile", "pip_requirements"],
-      "addLabels": ["dependencies"]
-    },
     {
       "description": "Use ci scope for GitHub Actions updates",
       "matchManagers": ["github-actions"],
@@ -69,6 +69,36 @@
       "semanticCommitType": "chore",
       "semanticCommitScope": "ci"
     },
+    {
+      "description": "Group golang toolchain - go.mod",
+      "matchManagers": ["gomod"],
+      "matchDepNames": ["go"],
+      "matchPackageNames": ["go"],
+      "matchDepTypes": ["golang"],
+      "groupName": "golang toolchain",
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "go",
+      "automerge": false,
+      "rangeStrategy": "bump"
+    },
+    {
+      "description": "Group golang toolchain - Dockerfile",
+      "matchManagers": ["dockerfile"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["golang", "registry.suse.com/bci/golang"],
+      "matchDepTypes": ["stage", "final"],
+      "groupName": "golang toolchain",
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "go",
+      "automerge": false,
+      "rangeStrategy": "bump"
+    },
+    {
+      "description": "Group golang.org/x/ packages together as they release in sync and go get forces co-updates",
+      "matchManagers": ["gomod"],
+      "matchPackageNames": ["golang.org/x/**"],
+      "groupName": "golang.org/x dependencies"
+    },    
     {
       "description": "Release branches: only security",
       "matchBaseBranches": ["/^v\\d+(\\.\\d+)+/"],
@@ -107,67 +137,29 @@
       "matchPackageNames": ["/^kubevirt\\.io//"]
     },
     {
-      "description": "Group golang toolchain - go.mod",
-      "matchManagers": ["gomod"],
-      "matchDepNames": ["go"],
-      "matchPackageNames": ["go"],
-      "matchDepTypes": ["golang"],
-      "groupName": "golang toolchain",
-      "semanticCommitType": "chore",
-      "semanticCommitScope": "go",
-      "automerge": false,
-      "rangeStrategy": "bump"
-    },
-    {
-      "description": "Group golang toolchain - Dockerfile",
-      "matchManagers": ["dockerfile"],
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["golang", "registry.suse.com/bci/golang"],
-      "matchDepTypes": ["stage", "final"],
-      "groupName": "golang toolchain",
-      "semanticCommitType": "chore",
-      "semanticCommitScope": "go",
-      "automerge": false,
-      "rangeStrategy": "bump"
-    },
-    {
-      "description": "Group all BCI base images together",
+      "description": "Disable BCI base image updates (golang BCI tracked via Go toolchain group)",
       "enabled": false,
-      "matchManagers": ["dockerfile"],
       "matchDatasources": ["docker"],
       "matchPackageNames": [
-        "registry.suse.com/bci/**",
-        "registry.opensuse.org/**",
-        "!registry.suse.com/bci/golang"
-      ],
-      "groupName": "SUSE BCI base images",
-      "semanticCommitType": "chore",
-      "semanticCommitScope": "deps",
-      "automerge": false,
-      "rangeStrategy": "bump"
+        "/^registry\\.suse\\.com\\/bci\\//",
+        "/^registry\\.opensuse\\.org\\//",
+        "!registry.suse.com/bci/golang",
+        "!registry.opensuse.org/opensuse/bci/golang"
+      ]
     },
     {
-      "description": "Group k8s and rancher packages",
+      "description": "Disable Rancher packages updates",
+      "enabled": false,
       "matchManagers": ["gomod"],
       "matchPackageNames": [
-        "/k8s\\.io//",
         "/^github\\.com/rancher//",
         "/^github\\.com/k3s-io//"
-      ],
-      "automerge": false,
-      "groupName": "k8s + rancher dependencies",
-      "prBodyNotes": ["⚠️ **Check longhorn compatibility before merging.**"]
+      ]
     },
     {
       "description": "Label PRs with target branch name",
       "matchPackageNames": ["*"],
       "addLabels": ["renovate/{{baseBranch}}"]
     }
-  ],
-  "postUpdateOptions": ["gomodTidy", "gomodVendor"],
-  "schedule": ["at any time"],
-  "semanticCommitScope": "deps",
-  "semanticCommitType": "chore",
-  "semanticCommits": "enabled",
-  "timezone": "Asia/Taipei"
+  ]
 }
