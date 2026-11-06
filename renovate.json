@@ -1,5 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": [
+    "custom.regex is enabled so a consumer repo can declare its own customManagers (this preset ships none); security:only-security-updates still disables every dependency, so the consumer also needs a packageRules entry with enabled: true for what it tracks.",
+    "deploy/** and **/charts/** are ignored per manager (dockerfile, gomod, pip_requirements) instead of at the top level: a top-level ignorePaths would also hide chart values from a consumer's custom manager, and ignorePaths cannot be set inside a customManagers entry. A manager-level ignorePaths replaces the top-level list for that manager, so those three managers scan exactly the same files as before."
+  ],
   "extends": [
     "config:recommended",
     "security:only-security-updates",
@@ -19,12 +23,18 @@
     "gomod",
     "dockerfile",
     "github-actions",
-    "pip_requirements"
+    "pip_requirements",
+    "custom.regex"
   ],
-  "ignorePaths": [
-    "deploy/**",
-    "**/charts/**"
-  ],
+  "dockerfile": {
+    "ignorePaths": ["deploy/**", "**/charts/**"]
+  },
+  "gomod": {
+    "ignorePaths": ["deploy/**", "**/charts/**"]
+  },
+  "pip_requirements": {
+    "ignorePaths": ["deploy/**", "**/charts/**"]
+  },
   "schedule": ["at any time"],
   "timezone": "Asia/Taipei",
   "dependencyDashboard": false,

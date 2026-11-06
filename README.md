@@ -26,7 +26,7 @@ Current defaults include:
 
 - `dependencyDashboard: false` — no dependency dashboard issue is created
 - `prHourlyLimit: 0` / `prConcurrentLimit: 0` — no cap on open or hourly PRs
-- `ignorePaths`: `deploy/**` and `**/charts/**`
+- `ignorePaths`: `deploy/**` and `**/charts/**`, set per manager on `gomod`, `dockerfile` and `pip_requirements` (`ignorePaths` is not mergeable, so a manager-level list replaces the top-level one and these three managers scan exactly the same files as before). Keeping the globs off the top level lets a consumer's `customManagers` track files under those paths; custom managers and `github-actions` fall back to the `config:recommended` defaults (`node_modules`, `vendor`, test directories)
 - `lockFileMaintenance: enabled` — this is the one PR source that is not vulnerability-driven
 - Labels: `dependencies` (gomod / dockerfile / pip), `ci` (github-actions), `needs-review` (vulnerability PRs)
 - Semantic commits (`chore(deps)`, `chore(ci)`), `:gitSignOff`, merge-confidence age badges
@@ -39,6 +39,7 @@ Current defaults include:
 - `dockerfile`
 - `github-actions`
 - `pip_requirements`
+- `custom.regex` — enabled so a consumer can declare its own `customManagers` (the preset ships none). Remember that `security:only-security-updates` disables every dependency, so such a consumer also needs a `packageRules` entry with `enabled: true` for the dependency it tracks
 
 ## Branch Policy
 
